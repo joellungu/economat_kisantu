@@ -1,6 +1,16 @@
+import 'package:economat_kisantu/pages/clients_fournisseurs/client/client.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'client/client_controller.dart';
+import 'fournisseur/fournisseur.dart';
+import 'fournisseur/fournisseur_controller.dart';
 
-class Achats extends StatelessWidget {
+class ClientsFournisseurs extends StatelessWidget {
+  //
+  ClientController clientController = Get.put(ClientController());
+  //
+  FournisseurController fournisseurController =
+      Get.put(FournisseurController());
   //
   @override
   Widget build(BuildContext context) {
@@ -9,7 +19,7 @@ class Achats extends StatelessWidget {
       length: 2,
       child: Scaffold(
         body: Column(children: [
-          TabBar(
+          const TabBar(
             isScrollable: true,
             tabs: [
               Tab(
@@ -24,8 +34,8 @@ class Achats extends StatelessWidget {
             flex: 1,
             child: TabBarView(
               children: [
-                Container(),
-                Container(),
+                Clients(),
+                Fournisseurs(),
               ],
             ),
           )

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:economat_kisantu/utils/langi.dart';
+import 'clients_fournisseurs/clients_fournisseurs.dart';
 import 'parametres/parametres.dart';
 
 class Accueil extends StatefulWidget {
@@ -35,7 +36,7 @@ class _Accueil extends State<Accueil> with TickerProviderStateMixin {
   // NiveauController niveauController = Get.put(NiveauController());
   //
   //Horaire//Calendrier//Evenement//Utilisateur//Infos//Live/
-  Rx<Widget> vue = Rx(Parametres());
+  Rx<Widget> vue = Rx(ClientsFournisseurs());
   RxInt choix = 0.obs;
   //
   List angles = [

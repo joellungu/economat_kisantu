@@ -40,10 +40,18 @@ class MyApp extends StatelessWidget {
     //load(context);
     //
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'Economat Kisantu',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        )),
         useMaterial3: true,
       ),
       home: Splash(),

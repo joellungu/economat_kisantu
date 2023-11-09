@@ -30,6 +30,8 @@ class CodeComptable extends GetView<CodeComptableController> {
                   (state) {
                     List codes = state!;
                     RxString text = "".obs;
+                    RxBool pass = true.obs;
+                    //
                     return Column(
                       children: [
                         Container(
@@ -52,38 +54,43 @@ class CodeComptable extends GetView<CodeComptableController> {
                         Expanded(
                           flex: 1,
                           child: Obx(
-                            () => ListView(
-                              padding: EdgeInsets.all(10),
-                              children: List.generate(codes.length, (index) {
-                                Map code = codes[index];
-                                if ("${code['code']}"
-                                        .toLowerCase()
-                                        .contains(text.value.toLowerCase()) ||
-                                    "${code['label']}"
-                                        .toLowerCase()
-                                        .contains(text.value.toLowerCase())) {
-                                  return ListTile(
-                                    title: Text("${code['code']}"),
-                                    subtitle: Text("${code['label']}"),
-                                    trailing: IconButton(
-                                      onPressed: () {
-                                        //
-                                        codes.removeAt(index);
-                                        box.write("codes", codes);
-                                        controller.tousLesCodes();
-                                        //
-                                      },
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Colors.red.shade700,
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              }),
-                            ),
+                            () => pass.value
+                                ? ListView(
+                                    padding: EdgeInsets.all(10),
+                                    children:
+                                        List.generate(codes.length, (index) {
+                                      Map code = codes[index];
+                                      if ("${code['code']}"
+                                              .toLowerCase()
+                                              .contains(
+                                                  text.value.toLowerCase()) ||
+                                          "${code['label']}"
+                                              .toLowerCase()
+                                              .contains(
+                                                  text.value.toLowerCase())) {
+                                        return ListTile(
+                                          title: Text("${code['code']}"),
+                                          subtitle: Text("${code['label']}"),
+                                          trailing: IconButton(
+                                            onPressed: () {
+                                              //
+                                              codes.removeAt(index);
+                                              box.write("codes", codes);
+                                              controller.tousLesCodes();
+                                              //
+                                            },
+                                            icon: Icon(
+                                              Icons.delete,
+                                              color: Colors.red.shade700,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    }),
+                                  )
+                                : Container(),
                           ),
                         )
                       ],
