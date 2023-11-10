@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,8 @@ List entiteAdmin = [];
 
 void main() async {
   //
+  pourcent(10);
+  //
   WidgetsFlutterBinding.ensureInitialized();
   // Must add this line.
   await windowManager.ensureInitialized();
@@ -19,7 +22,7 @@ void main() async {
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
-    titleBarStyle: TitleBarStyle.hidden,
+    titleBarStyle: TitleBarStyle.normal,
   );
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
@@ -54,7 +57,29 @@ class MyApp extends StatelessWidget {
         )),
         useMaterial3: true,
       ),
-      home: Splash(),
+      home: Accueil(),
     );
   }
+}
+
+pourcent(double pr) {
+  //
+  //(%) = 100 x Valeur partielle/Valeur totale
+  //double prct = (5 * montant) / 100;
+  double prct = (100 * 5) / 100;
+  //prct * Valeur totale = (100 * Valeur partielle)
+  //(prct * Valeur totale) / 100 = Valeur partielle
+  double vp = (pr * 300) / 100;
+  print("le pourcentage vaut: 1 = $prct");
+  print("le pourcentage vaut: 2 = $vp");
+}
+
+load() async {
+  List l = [1, 3, 4, 5];
+  print("liste avant: $l");
+  Timer(const Duration(seconds: 3), () {
+    //
+    l.insert(1, 2);
+    print("liste après: $l");
+  });
 }

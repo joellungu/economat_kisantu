@@ -121,7 +121,7 @@ class Clients extends GetView<ClientController> {
                     color: Colors.transparent,
                     child: Center(
                       child: Container(
-                        height: 700,
+                        height: 800,
                         width: 1000,
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(

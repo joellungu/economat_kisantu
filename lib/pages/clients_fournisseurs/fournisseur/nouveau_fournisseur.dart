@@ -10,6 +10,8 @@ class NouveauFournisseur extends StatelessWidget {
   //
   FournisseurController controller = Get.find();
   //
+  RxInt indexCompteDefaut = 0.obs;
+  //
   TextEditingController raisonSocial = TextEditingController();
   TextEditingController nomContact = TextEditingController();
   TextEditingController reference = TextEditingController();
@@ -28,9 +30,9 @@ class NouveauFournisseur extends StatelessWidget {
   //
   List codes = [];
   //
-  NouveauClient() {
+  NouveauFournisseur() {
     codes = box.read("codes") ?? [];
-    compteDefaut = codes[0]['code'];
+    compteDefaut = codes.isNotEmpty ? codes[0]['code'] : "";
   }
 
   /*
@@ -46,7 +48,7 @@ class NouveauFournisseur extends StatelessWidget {
         const Align(
           alignment: Alignment.topCenter,
           child: Text(
-            "Nouveau client",
+            "Nouveau fournisseur",
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -66,7 +68,7 @@ class NouveauFournisseur extends StatelessWidget {
                     children: [
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: raisonSocial,
@@ -74,35 +76,35 @@ class NouveauFournisseur extends StatelessWidget {
                         decoration: InputDecoration(
                             labelText: "Raison sociale",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: nomContact,
                         decoration: InputDecoration(
                             labelText: "Nom du contact",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: reference,
                         decoration: InputDecoration(
                             labelText: "Référence",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 20,
@@ -112,7 +114,7 @@ class NouveauFournisseur extends StatelessWidget {
                 ),
               ),
               const SizedBox(
-                width: 30,
+                width: 20,
               ),
               Expanded(
                 flex: 4,
@@ -122,7 +124,7 @@ class NouveauFournisseur extends StatelessWidget {
                     children: [
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: email,
@@ -130,35 +132,35 @@ class NouveauFournisseur extends StatelessWidget {
                         decoration: InputDecoration(
                             labelText: "Email",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: mobile,
                         decoration: InputDecoration(
                             labelText: "Mobile",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: telephone,
                         decoration: InputDecoration(
                           labelText: "Téléphone",
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                         ),
                       ),
@@ -173,7 +175,7 @@ class NouveauFournisseur extends StatelessWidget {
           ),
         ),
         const SizedBox(
-          height: 10,
+          height: 5,
         ),
         const Align(
           alignment: Alignment.topCenter,
@@ -186,7 +188,7 @@ class NouveauFournisseur extends StatelessWidget {
           ),
         ),
         Expanded(
-          flex: 5,
+          flex: 6,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -198,7 +200,7 @@ class NouveauFournisseur extends StatelessWidget {
                     children: [
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: adresse1,
@@ -206,49 +208,49 @@ class NouveauFournisseur extends StatelessWidget {
                         decoration: InputDecoration(
                             labelText: "Adresse 1",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: adresse2,
                         decoration: InputDecoration(
                             labelText: "Adresse 2",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: codePostal,
                         decoration: InputDecoration(
                             labelText: "Code postal",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: ville,
                         decoration: InputDecoration(
                             labelText: "Ville",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
@@ -262,7 +264,7 @@ class NouveauFournisseur extends StatelessWidget {
                               child: Obx(
                                 () => TextField(
                                   style: const TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 15,
                                     color: Colors.black,
                                   ),
                                   controller: pays.value,
@@ -271,7 +273,7 @@ class NouveauFournisseur extends StatelessWidget {
                                       labelText: "Pays",
                                       border: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(10))),
+                                              BorderRadius.circular(15))),
                                 ),
                               ),
                             ),
@@ -314,7 +316,7 @@ class NouveauFournisseur extends StatelessWidget {
                     children: [
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: compteAuxilier,
@@ -322,7 +324,7 @@ class NouveauFournisseur extends StatelessWidget {
                         decoration: InputDecoration(
                             labelText: "Compte auxiliere",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
@@ -346,9 +348,10 @@ class NouveauFournisseur extends StatelessWidget {
                               flex: 1,
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  value: 0,
+                                  value: indexCompteDefaut.value,
                                   onChanged: (c) {
                                     //
+                                    indexCompteDefaut.value = c as int;
                                     compteDefaut = codes[c as int]['code'];
                                   },
                                   items: List.generate(codes.length, (index) {
@@ -369,14 +372,14 @@ class NouveauFournisseur extends StatelessWidget {
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: nTva,
                         decoration: InputDecoration(
                             labelText: "N° de TVA",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 20,

@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'code_comptable/code_comptable_controller.dart';
+import 'exercice_comptable/exercice_comptable.dart';
+import 'exercice_comptable/exercice_comptable_controller.dart';
 
 class Parametres extends StatelessWidget {
   //
   CodeComptableController codeComptableController =
       Get.put(CodeComptableController());
+  //
+  ExerciceComptableController excerciceComptableController =
+      Get.put(ExerciceComptableController());
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,7 @@ class Parametres extends StatelessWidget {
             child: TabBarView(
               children: [
                 CodeComptable(),
-                Container(),
+                ExerciceComptable(),
                 Container(),
               ],
             ),

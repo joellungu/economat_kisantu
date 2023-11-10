@@ -1,9 +1,18 @@
+import 'package:economat_kisantu/pages/clients_fournisseurs/fournisseur/fournisseur.dart';
+import 'package:economat_kisantu/pages/ventes/ventes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:economat_kisantu/utils/langi.dart';
+import 'achats/achates.dart';
+import 'achats/achats_controller.dart';
+import 'bilan/bilan.dart';
+import 'caisses/caisse.dart';
+import 'caisses/caisse_controller.dart';
 import 'clients_fournisseurs/clients_fournisseurs.dart';
+import 'journal/journal.dart';
 import 'parametres/parametres.dart';
+import 'ventes/ventes_controller.dart';
 
 class Accueil extends StatefulWidget {
   const Accueil({super.key});
@@ -20,12 +29,11 @@ class _Accueil extends State<Accueil> with TickerProviderStateMixin {
   //
 
   //
-  // EvenementController evenementController = Get.put(EvenementController());
+  AchatsController achatsController = Get.put(AchatsController());
   // //
-  // UtilisateurController utilisateurController =
-  //     Get.put(UtilisateurController());
+  VentesController ventesController = Get.put(VentesController());
   // //
-  // CalendrierController calendrierController = Get.put(CalendrierController());
+  CaisseController caisseController = Get.put(CaisseController());
   // //
   // HoraireController horaireController = Get.put(HoraireController());
   // //
@@ -36,18 +44,18 @@ class _Accueil extends State<Accueil> with TickerProviderStateMixin {
   // NiveauController niveauController = Get.put(NiveauController());
   //
   //Horaire//Calendrier//Evenement//Utilisateur//Infos//Live/
-  Rx<Widget> vue = Rx(ClientsFournisseurs());
+  Rx<Widget> vue = Rx(Achats()); //
   RxInt choix = 0.obs;
   //
   List angles = [
     {"titre": "Ventes", "icon": "HeroiconsCalendarDaysSolid"},
     {"titre": "Achats", "icon": "PhCalendarCheckFill"},
     {"titre": "Caisse", "icon": "CarbonPiggyBankSlot"},
-    {"titre": "Banque", "icon": "IcBaselineDoorBack"},
-    {"titre": "Op. diverses", "icon": "PhCalendarCheckFill"},
+    //{"titre": "Banque", "icon": "IcBaselineDoorBack"},
+    //{"titre": "Op. diverses", "icon": "PhCalendarCheckFill"},
     {"titre": "Journaux", "icon": "JamNewspaperF"},
     {"titre": "Bilan", "icon": "PhUserDuotone"},
-    {"titre": "Liv. de compte", "icon": "BasilBookOpenSolid"},
+    //{"titre": "Liv. de compte", "icon": "BasilBookOpenSolid"},
     {"titre": "Clients & Fournisseurs", "icon": "IonPeople"},
     {"titre": "Parametres", "icon": "SolarSettingsMinimalisticBold"},
   ];
@@ -71,41 +79,38 @@ class _Accueil extends State<Accueil> with TickerProviderStateMixin {
       color: Langi.base1,
       child: SafeArea(
         child: Scaffold(
-          body: Obx(() => vue.value),
-          bottomNavigationBar: SizedBox(
-            height: 60,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(angles.length, (index) {
-                Map e = angles[index];
-                return InkWell(
-                  onTap: () {
-                    //
-                    choix.value = index;
-                    //
-                    if (choix.value == 0) {
-                      vue.value = Container();
-                    } else if (choix.value == 1) {
-                      vue.value = Container();
-                    } else if (choix.value == 2) {
-                      vue.value = Container();
-                    } else if (choix.value == 3) {
-                      vue.value = Container();
-                    } else if (choix.value == 4) {
-                      vue.value = Container();
-                    } else if (choix.value == 5) {
-                      vue.value = Container();
-                    } else {
-                      vue.value = Container();
-                    }
-                  },
-                  child: Obx(
-                    () => Expanded(
-                      flex: 2,
-                      child: SizedBox(
+            body: Obx(() => vue.value),
+            bottomNavigationBar: Container(
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(angles.length, (index) {
+                  Map e = angles[index];
+                  return InkWell(
+                    onTap: () {
+                      //
+                      choix.value = index;
+                      //
+                      if (choix.value == 0) {
+                        vue.value = Container();
+                      } else if (choix.value == 1) {
+                        vue.value = Container();
+                      } else if (choix.value == 2) {
+                        vue.value = Container();
+                      } else if (choix.value == 3) {
+                        vue.value = Container();
+                      } else if (choix.value == 4) {
+                        vue.value = Container();
+                      } else if (choix.value == 5) {
+                        vue.value = Container();
+                      } else {
+                        vue.value = Container();
+                      }
+                    },
+                    child: Obx(
+                      () => SizedBox(
                         //flex: 1,
                         //width: 70,
-                        height: 60,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -114,7 +119,7 @@ class _Accueil extends State<Accueil> with TickerProviderStateMixin {
                               colorFilter: index == choix.value
                                   ? ColorFilter.mode(
                                       Langi.base2, BlendMode.srcIn)
-                                  : ColorFilter.mode(
+                                  : const ColorFilter.mode(
                                       Colors.grey, BlendMode.srcIn),
                               semanticsLabel: e["titre"],
                               height: 30,
@@ -136,12 +141,10 @@ class _Accueil extends State<Accueil> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
+                  );
+                }),
+              ),
+            )),
       ),
     );
   }

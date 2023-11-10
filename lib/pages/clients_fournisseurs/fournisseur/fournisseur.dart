@@ -29,6 +29,7 @@ class Fournisseurs extends GetView<FournisseurController> {
               child: controller.obx(
                 (state) {
                   List fournisseurs = state!;
+                  print(fournisseurs);
                   RxString text = "".obs;
                   RxBool pass = true.obs;
                   return Column(
@@ -122,7 +123,7 @@ class Fournisseurs extends GetView<FournisseurController> {
                     color: Colors.transparent,
                     child: Center(
                       child: Container(
-                        height: 700,
+                        height: 800,
                         width: 1000,
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(

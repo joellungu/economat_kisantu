@@ -11,6 +11,8 @@ class NouveauClient extends StatelessWidget {
   //
   ClientController controller = Get.find();
   //
+  RxInt indexCompteDefaut = 0.obs;
+  //
   TextEditingController raisonSocial = TextEditingController();
   TextEditingController nomContact = TextEditingController();
   TextEditingController reference = TextEditingController();
@@ -31,7 +33,7 @@ class NouveauClient extends StatelessWidget {
   //
   NouveauClient() {
     codes = box.read("codes") ?? [];
-    compteDefaut = codes[0]['code'];
+    compteDefaut = codes.isNotEmpty ? codes[0]['code'] : "";
   }
   /*
   TextEditingController textCode = TextEditingController();
@@ -66,7 +68,7 @@ class NouveauClient extends StatelessWidget {
                     children: [
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: raisonSocial,
@@ -74,35 +76,35 @@ class NouveauClient extends StatelessWidget {
                         decoration: InputDecoration(
                             labelText: "Raison sociale",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: nomContact,
                         decoration: InputDecoration(
                             labelText: "Nom du contact",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: reference,
                         decoration: InputDecoration(
                             labelText: "Référence",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 20,
@@ -122,7 +124,7 @@ class NouveauClient extends StatelessWidget {
                     children: [
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: email,
@@ -130,35 +132,35 @@ class NouveauClient extends StatelessWidget {
                         decoration: InputDecoration(
                             labelText: "Email",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: mobile,
                         decoration: InputDecoration(
                             labelText: "Mobile",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: telephone,
                         decoration: InputDecoration(
                           labelText: "Téléphone",
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                         ),
                       ),
@@ -198,7 +200,7 @@ class NouveauClient extends StatelessWidget {
                     children: [
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: adresse1,
@@ -206,49 +208,49 @@ class NouveauClient extends StatelessWidget {
                         decoration: InputDecoration(
                             labelText: "Adresse 1",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: adresse2,
                         decoration: InputDecoration(
                             labelText: "Adresse 2",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: codePostal,
                         decoration: InputDecoration(
                             labelText: "Code postal",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: ville,
                         decoration: InputDecoration(
                             labelText: "Ville",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
@@ -262,7 +264,7 @@ class NouveauClient extends StatelessWidget {
                               child: Obx(
                                 () => TextField(
                                   style: const TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 15,
                                     color: Colors.black,
                                   ),
                                   controller: pays.value,
@@ -271,7 +273,7 @@ class NouveauClient extends StatelessWidget {
                                       labelText: "Pays",
                                       border: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(10))),
+                                              BorderRadius.circular(15))),
                                 ),
                               ),
                             ),
@@ -314,7 +316,7 @@ class NouveauClient extends StatelessWidget {
                     children: [
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: compteAuxilier,
@@ -322,7 +324,7 @@ class NouveauClient extends StatelessWidget {
                         decoration: InputDecoration(
                             labelText: "Compte auxiliere",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 10,
@@ -346,9 +348,10 @@ class NouveauClient extends StatelessWidget {
                               flex: 1,
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  value: 0,
+                                  value: indexCompteDefaut.value,
                                   onChanged: (c) {
                                     //
+                                    indexCompteDefaut.value = c as int;
                                     compteDefaut = codes[c as int]['code'];
                                   },
                                   items: List.generate(codes.length, (index) {
@@ -369,14 +372,14 @@ class NouveauClient extends StatelessWidget {
                       ),
                       TextField(
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 15,
                           color: Colors.black,
                         ),
                         controller: nTva,
                         decoration: InputDecoration(
                             labelText: "N° de TVA",
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(15))),
                       ),
                       const SizedBox(
                         height: 20,

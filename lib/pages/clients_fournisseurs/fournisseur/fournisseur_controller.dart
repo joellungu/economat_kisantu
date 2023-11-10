@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class FournisseurController extends GetxController with StateMixin<List> {
-//
+  //
   var box = GetStorage();
   //
   tousLesFournisseurs() async {
