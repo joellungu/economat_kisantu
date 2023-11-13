@@ -347,23 +347,25 @@ class NouveauClient extends StatelessWidget {
                             Expanded(
                               flex: 1,
                               child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  value: indexCompteDefaut.value,
-                                  onChanged: (c) {
-                                    //
-                                    indexCompteDefaut.value = c as int;
-                                    compteDefaut = codes[c as int]['code'];
-                                  },
-                                  items: List.generate(codes.length, (index) {
-                                    return DropdownMenuItem(
-                                      value: index,
-                                      child: Text(
-                                          "${codes[index]['label']} (${codes[index]['code']})"),
-                                    );
-                                  }),
+                                child: Obx(
+                                  () => DropdownButton(
+                                    value: indexCompteDefaut.value,
+                                    onChanged: (c) {
+                                      //
+                                      indexCompteDefaut.value = c as int;
+                                      compteDefaut = codes[c as int]['code'];
+                                    },
+                                    items: List.generate(codes.length, (index) {
+                                      return DropdownMenuItem(
+                                        value: index,
+                                        child: Text(
+                                            "${codes[index]['label']} (${codes[index]['code']})"),
+                                      );
+                                    }),
+                                  ),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),

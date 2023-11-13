@@ -11,7 +11,7 @@ class Ventes extends StatelessWidget {
   //
   RxString tauxLabel = "".obs;
   RxInt indexTaux = 0.obs;
-  TextEditingController taux = TextEditingController();
+  TextEditingController taux = TextEditingController(text: "0");
   //
   VentesController controller = Get.find();
   //
@@ -45,6 +45,9 @@ class Ventes extends StatelessWidget {
   RxList produitsServices = [].obs;
   //
   Ventes() {
+    //
+    taux.text = "0";
+    //
     clients.value = box.read("clients") ?? [];
     codes = box.read("codes") ?? [];
     codeGrandLivre = codes.isNotEmpty ? codes[0]['code'] : "";
@@ -575,18 +578,92 @@ class Ventes extends StatelessWidget {
                                 flex: 4,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Map ps = {
-                                      "article": article.text,
-                                      "code": codeGrandLivre,
-                                      "taux_tva": tauxTva.text,
-                                      "quantite": quantite.text,
-                                      "prix_unitaire": prixUnitaire.text,
-                                      //calculé
-                                      "montant_tva": montantTva.value.text,
-                                      "total": total.value.text,
-                                    };
-                                    //
-                                    produitsServices.add(ps);
+                                    if ([
+                                          "USD",
+                                          "CDF",
+                                          "EUR"
+                                        ][indexTaux.value] ==
+                                        "USD") {
+                                      try {
+                                        double mt = pourcent(
+                                            double.parse(tauxTva.text),
+                                            int.parse(quantite.text) *
+                                                double.parse(
+                                                    prixUnitaire.text));
+
+                                        Map ps = {
+                                          "article": article.text,
+                                          "code": codeGrandLivre,
+                                          "taux_tva": tauxTva.text,
+                                          "quantite": quantite.text,
+                                          "prix_unitaire": prixUnitaire.text,
+                                          "devise": [
+                                            "USD",
+                                            "CDF",
+                                            "EUR"
+                                          ][indexTaux.value],
+                                          "taux": double.parse(taux.text),
+
+                                          //
+                                          "montant_tva": mt,
+                                          "total": mt +
+                                              (int.parse(quantite.text) *
+                                                  double.parse(
+                                                      prixUnitaire.text)),
+                                        };
+                                        //
+                                        produitsServices.add(ps);
+                                      } catch (e) {
+                                        Get.snackbar(
+                                          "Erreur",
+                                          "Un problème est survenu, veuilliez inserer des chiffres et non des lettres",
+                                          backgroundColor: Colors.red.shade700,
+                                          colorText: Colors.white,
+                                        );
+                                      }
+                                    } else {
+                                      //Conversion...
+
+                                      //
+                                      try {
+                                        double pu =
+                                            double.parse(prixUnitaire.text) /
+                                                double.parse(taux.text);
+                                        print("le pourcentage vaut: pu = $pu");
+                                        //
+                                        double mt = pourcent(
+                                            double.parse(tauxTva.text),
+                                            int.parse(quantite.text) * pu);
+
+                                        Map ps = {
+                                          "article": article.text,
+                                          "code": codeGrandLivre,
+                                          "taux_tva": tauxTva.text,
+                                          "quantite": quantite.text,
+                                          "prix_unitaire": prixUnitaire.text,
+                                          "devise": [
+                                            "USD",
+                                            "CDF",
+                                            "EUR"
+                                          ][indexTaux.value],
+                                          "taux": double.parse(taux.text),
+
+                                          //
+                                          "montant_tva": mt,
+                                          "total": mt +
+                                              (int.parse(quantite.text) * pu),
+                                        };
+                                        //
+                                        produitsServices.add(ps);
+                                      } catch (e) {
+                                        Get.snackbar(
+                                          "Erreur",
+                                          "Un problème est survenu, veuilliez inserer des chiffres et non des lettres",
+                                          backgroundColor: Colors.red.shade700,
+                                          colorText: Colors.white,
+                                        );
+                                      }
+                                    }
                                   },
                                   child: Text("Ajouter"),
                                 ),
@@ -924,7 +1001,7 @@ class Ventes extends StatelessWidget {
                 "taux": taux.text,
                 "taux_montant": tauxLabel.value,
                 "solder": 0,
-                "axercice": box.read("exercice") ?? "",
+                "exercice": box.read("exercice") ?? "",
                 "client": client,
                 "date_facture": dateFacture.value,
                 "date_echeance": dateEcheance.value,
@@ -944,5 +1021,18 @@ class Ventes extends StatelessWidget {
       ),
     );
   }
+
   //
+  double pourcent(double pr, double vt) {
+    //
+    //(%) = 100 x Valeur partielle/Valeur totale
+    //double prct = (5 * montant) / 100;
+    double prct = (100 * 5) / 100;
+    //prct * Valeur totale = (100 * Valeur partielle)
+    //(prct * Valeur totale) / 100 = Valeur partielle
+    double vp = (pr * vt) / 100;
+    print("le pourcentage vaut: 1 = $prct");
+    print("le pourcentage vaut: 2 = $vp");
+    return vp;
+  }
 }

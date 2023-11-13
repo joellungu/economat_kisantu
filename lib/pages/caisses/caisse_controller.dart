@@ -15,6 +15,16 @@ class CaisseController extends GetxController {
     //
   }
 
+  enregistrerCaisseEntite(Map code) {
+    //
+    List codes = box.read("caisseentite") ?? [];
+    //
+    codes.add(code);
+    //
+    box.write("clients", codes);
+    //
+  }
+
 //
   enregistrerAchats(Map code) {
     //

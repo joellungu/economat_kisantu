@@ -44,6 +44,8 @@ class Achats extends StatelessWidget {
   RxList produitsServices = [].obs;
   //
   Achats() {
+    //
+    //
     fournisseurs.value = box.read("fournisseurs") ?? [];
     codes = box.read("codes") ?? [];
     codeGrandLivre = codes.isNotEmpty ? codes[0]['code'] : "";
@@ -580,6 +582,8 @@ class Achats extends StatelessWidget {
                                   onPressed: () {
                                     //(%) = 100 x Valeur partielle/Valeur totale
                                     //(%)*Valeur totale = 100 x Valeur partielle
+                                    String tx =
+                                        taux.text.isEmpty ? "0" : taux.text;
                                     //
                                     if ([
                                           "USD",
@@ -605,7 +609,7 @@ class Achats extends StatelessWidget {
                                             "CDF",
                                             "EUR"
                                           ][indexTaux.value],
-                                          "taux": double.parse(taux.text),
+                                          "taux": double.parse(tx),
 
                                           //
                                           "montant_tva": mt,
@@ -631,7 +635,7 @@ class Achats extends StatelessWidget {
                                       try {
                                         double pu =
                                             double.parse(prixUnitaire.text) /
-                                                double.parse(taux.text);
+                                                double.parse(tx);
                                         print("le pourcentage vaut: pu = $pu");
                                         //
                                         double mt = pourcent(
@@ -649,7 +653,7 @@ class Achats extends StatelessWidget {
                                             "CDF",
                                             "EUR"
                                           ][indexTaux.value],
-                                          "taux": double.parse(taux.text),
+                                          "taux": double.parse(tx),
 
                                           //
                                           "montant_tva": mt,
@@ -1072,7 +1076,7 @@ class Achats extends StatelessWidget {
                 "taux": taux.text,
                 "taux_montant": tauxLabel.value,
                 "solder": 0,
-                "axercice": box.read("exercice") ?? "",
+                "exercice": box.read("exercice") ?? "",
                 "fournisseur": fournisseur,
                 "date_facture": dateFacture.value,
                 "date_echeance": dateEcheance.value,

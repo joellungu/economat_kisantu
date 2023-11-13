@@ -1,13 +1,15 @@
+import 'package:country_picker/country_picker.dart';
 import 'package:economat_kisantu/pages/achats/achats_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'caisse_controller.dart';
 
 class Caisse extends StatelessWidget {
   //
-  Map fournisseur = {};
+  Map caisseentite = {};
   RxInt indexFournisseur = 0.obs;
   //
   RxString tauxLabel = "".obs;
@@ -29,8 +31,9 @@ class Caisse extends StatelessWidget {
   TextEditingController referenceFac = TextEditingController();
   TextEditingController noteFac = TextEditingController();
   //
-  RxList fournisseurs = [].obs;
+  //RxList fournisseurs = [].obs;
   String codeGrandLivre = "";
+  RxInt indexCodeGrandLivre = 0.obs;
   //
   RxString dateFacture = "".obs;
   RxString dateEcheance = "".obs;
@@ -38,6 +41,8 @@ class Caisse extends StatelessWidget {
   String operation = "";
   RxList operations = ["Encaissement", "Décaissement"].obs;
   RxInt indexOperation = 0.obs;
+  //
+  RxList caisseentites = [].obs;
 
   //
   List codes = [];
@@ -45,10 +50,13 @@ class Caisse extends StatelessWidget {
   RxList produitsServices = [].obs;
   //
   Caisse() {
-    fournisseurs.value = box.read("fournisseurs") ?? [];
+    //
+    taux.text = "0";
+    //
+    caisseentites.value = box.read("caisseentites") ?? [];
     codes = box.read("codes") ?? [];
     codeGrandLivre = codes.isNotEmpty ? codes[0]['code'] : "";
-    print("fournisseurs: $fournisseurs");
+    print("caisseentites: $caisseentites");
   }
   //
   @override
@@ -127,49 +135,691 @@ class Caisse extends StatelessWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        Container(
-                          height: 45,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Colors.grey,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              const Text("   Fournisseur"),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: DropdownButtonHideUnderline(
-                                  child: Obx(
-                                    () => DropdownButton(
-                                      value: indexFournisseur.value,
-                                      onChanged: (c) {
-                                        //
-                                        indexFournisseur.value = c as int;
-                                        print(
-                                            "indexFournisseur: $indexFournisseur");
-                                        fournisseur = fournisseurs[c as int];
-                                      },
-                                      items: List.generate(fournisseurs.length,
-                                          (index) {
-                                        return DropdownMenuItem(
-                                          value: index,
-                                          child: Text(
-                                            "${fournisseurs[index]['nom_contact']} (${fournisseurs[index]['raison_social']})",
-                                          ),
-                                        );
-                                      }),
-                                    ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                height: 45,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Colors.grey,
                                   ),
                                 ),
-                              )
-                            ],
-                          ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    const Text("   Fournisseur"),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: DropdownButtonHideUnderline(
+                                        child: Obx(
+                                          () => DropdownButton(
+                                            value: indexFournisseur.value,
+                                            onChanged: (c) {
+                                              //
+                                              indexFournisseur.value = c as int;
+                                              print(
+                                                  "indexFournisseur: $indexFournisseur");
+                                              caisseentite =
+                                                  caisseentites[c as int];
+                                            },
+                                            items: List.generate(
+                                                caisseentites.length, (index) {
+                                              return DropdownMenuItem(
+                                                value: index,
+                                                child: Text(
+                                                  "${caisseentites[index]['nom_contact']} (${caisseentites[index]['raison_social']})",
+                                                ),
+                                              );
+                                            }),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                //
+                                //ClientController controller = Get.find();
+                                //
+                                RxInt indexCompteDefaut = 0.obs;
+                                //
+                                TextEditingController raisonSocial =
+                                    TextEditingController();
+                                TextEditingController nomContact =
+                                    TextEditingController();
+                                TextEditingController reference =
+                                    TextEditingController();
+                                TextEditingController email =
+                                    TextEditingController();
+                                TextEditingController mobile =
+                                    TextEditingController();
+                                TextEditingController telephone =
+                                    TextEditingController();
+                                TextEditingController adresse1 =
+                                    TextEditingController();
+                                TextEditingController adresse2 =
+                                    TextEditingController();
+                                TextEditingController codePostal =
+                                    TextEditingController();
+                                TextEditingController ville =
+                                    TextEditingController();
+                                Rx<TextEditingController> pays =
+                                    Rx<TextEditingController>(
+                                        TextEditingController());
+                                TextEditingController compteAuxilier =
+                                    TextEditingController();
+                                String compteDefaut = "";
+                                TextEditingController nTva =
+                                    TextEditingController();
+                                //
+                                //List codess = [];
+                                //
+                                Get.dialog(
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: Center(
+                                      child: Container(
+                                        height: 800,
+                                        width: 1000,
+                                        padding: const EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            const Align(
+                                              alignment: Alignment.topCenter,
+                                              child: Text(
+                                                "Nouvelle caisse entite",
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 4,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 4,
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child: Column(
+                                                        children: [
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller:
+                                                                raisonSocial,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    "Raison sociale",
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller:
+                                                                nomContact,
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    "Nom du contact",
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller:
+                                                                reference,
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    "Référence",
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 30,
+                                                  ),
+                                                  Expanded(
+                                                    flex: 4,
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child: Column(
+                                                        children: [
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller: email,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    "Email",
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller: mobile,
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    "Mobile",
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller:
+                                                                telephone,
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  "Téléphone",
+                                                              border:
+                                                                  OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            15),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            const Align(
+                                              alignment: Alignment.topCenter,
+                                              child: Text(
+                                                "Détails compte",
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 5,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 4,
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child: Column(
+                                                        children: [
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller:
+                                                                adresse1,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    "Adresse 1",
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller:
+                                                                adresse2,
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    "Adresse 2",
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller:
+                                                                codePostal,
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    "Code postal",
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller: ville,
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    "Ville",
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Container(
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceAround,
+                                                              children: [
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child: Obx(
+                                                                    () =>
+                                                                        TextField(
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .black,
+                                                                      ),
+                                                                      controller:
+                                                                          pays.value,
+                                                                      enabled:
+                                                                          false,
+                                                                      decoration: InputDecoration(
+                                                                          labelText:
+                                                                              "Pays",
+                                                                          border:
+                                                                              OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                IconButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    //
+                                                                    showCountryPicker(
+                                                                      context:
+                                                                          context,
+                                                                      showPhoneCode:
+                                                                          true, // optional. Shows phone code before the country name.
+                                                                      onSelect:
+                                                                          (Country
+                                                                              country) {
+                                                                        //
+                                                                        pays.value.text =
+                                                                            country.displayName;
+                                                                        //
+                                                                        print(
+                                                                            'Select country: ${country.displayName}');
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                  icon: const Icon(
+                                                                      Icons
+                                                                          .card_membership),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 30,
+                                                  ),
+                                                  Expanded(
+                                                    flex: 4,
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child: Column(
+                                                        children: [
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller:
+                                                                compteAuxilier,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  "Compte auxiliere",
+                                                              border:
+                                                                  OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            15),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Container(
+                                                            height: 45,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              border:
+                                                                  Border.all(
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceAround,
+                                                              children: [
+                                                                const Text(
+                                                                    "Compte auxilier"),
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child:
+                                                                      DropdownButtonHideUnderline(
+                                                                    child: Obx(
+                                                                      () =>
+                                                                          DropdownButton(
+                                                                        value: indexCompteDefaut
+                                                                            .value,
+                                                                        onChanged:
+                                                                            (c) {
+                                                                          //
+                                                                          indexCompteDefaut.value =
+                                                                              c as int;
+                                                                          compteDefaut =
+                                                                              codes[c as int]['code'];
+                                                                        },
+                                                                        items: List.generate(
+                                                                            codes.length,
+                                                                            (index) {
+                                                                          return DropdownMenuItem(
+                                                                            value:
+                                                                                index,
+                                                                            child:
+                                                                                Text("${codes[index]['label']} (${codes[index]['code']})"),
+                                                                          );
+                                                                        }),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          TextField(
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                            controller: nTva,
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    "N° de TVA",
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15))),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      //print(
+                                                      //  "operations: $operations");
+                                                      //
+                                                      Map caisseentite = {
+                                                        "caisseentite":
+                                                            operations[
+                                                                indexOperation
+                                                                    .value],
+                                                        "raison_social":
+                                                            raisonSocial.text,
+                                                        "nom_contact":
+                                                            nomContact.text,
+                                                        "reference":
+                                                            reference.text,
+                                                        "email": email.text,
+                                                        "mobile": mobile.text,
+                                                        "telephone":
+                                                            telephone.text,
+                                                        "adresse1":
+                                                            adresse1.text,
+                                                        "adresse2":
+                                                            adresse2.text,
+                                                        "code_postal":
+                                                            codePostal.text,
+                                                        "ville": ville.text,
+                                                        "pays": pays.value.text,
+                                                        "compte_auxilier":
+                                                            compteAuxilier.text,
+                                                        "compte_defaut":
+                                                            compteDefaut,
+                                                        "n_tva": nTva.text,
+                                                      };
+                                                      //
+                                                      caisseentites
+                                                          .value = box.read(
+                                                              "caisseentites") ??
+                                                          [];
+                                                      //
+                                                      caisseentites
+                                                          .add(caisseentite);
+
+                                                      box.write("caisseentites",
+                                                          caisseentites);
+
+                                                      // controller
+                                                      //     .enregistrerClient(
+                                                      //         code);
+
+                                                      Get.back();
+                                                      Get.snackbar("Succès",
+                                                          "Enregistrement éffectué");
+                                                      //
+                                                    },
+                                                    child: const Text(
+                                                        "Enregistrer"),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      //
+                                                      Get.back();
+                                                      //
+                                                    },
+                                                    child: Text(
+                                                      "Annuler",
+                                                      style: TextStyle(
+                                                          color: Colors
+                                                              .red.shade700),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  name: "Nouveau client",
+                                );
+                              },
+                              child: const Text("Créer"),
+                            )
+                          ],
                         ),
                         const SizedBox(
                           height: 10,
@@ -283,9 +933,8 @@ class Caisse extends StatelessWidget {
                                 flex: 4,
                                 child: TextField(
                                   controller: referenceFac,
-                                  decoration: InputDecoration(
-                                    label:
-                                        const Text("Référence de la facture"),
+                                  decoration: const InputDecoration(
+                                    label: Text("Référence de la facture"),
                                     border: OutlineInputBorder(),
                                   ),
                                 ),
@@ -357,31 +1006,35 @@ class Caisse extends StatelessWidget {
                                       ),
                                       Expanded(
                                         flex: 1,
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton(
-                                            value: 0,
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
+                                        child: Obx(
+                                          () => DropdownButtonHideUnderline(
+                                            child: DropdownButton(
+                                              value: indexCodeGrandLivre.value,
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              onChanged: (c) {
+                                                //
+                                                indexCodeGrandLivre.value =
+                                                    c as int;
+                                                codeGrandLivre =
+                                                    codes[c as int]['code'];
+                                              },
+                                              items: List.generate(codes.length,
+                                                  (index) {
+                                                return DropdownMenuItem(
+                                                  value: index,
+                                                  child: Text(
+                                                    "${codes[index]['code']} (${codes[index]['label']})",
+                                                  ),
+                                                );
+                                              }),
                                             ),
-                                            onChanged: (c) {
-                                              //
-                                              codeGrandLivre =
-                                                  codes[c as int]['code'];
-                                            },
-                                            items: List.generate(codes.length,
-                                                (index) {
-                                              return DropdownMenuItem(
-                                                value: index,
-                                                child: Text(
-                                                  "${codes[index]['code']} (${codes[index]['label']})",
-                                                ),
-                                              );
-                                            }),
                                           ),
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -574,18 +1227,92 @@ class Caisse extends StatelessWidget {
                                 flex: 4,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Map ps = {
-                                      "article": article.text,
-                                      "code": codeGrandLivre,
-                                      "taux_tva": tauxTva.text,
-                                      "quantite": quantite.text,
-                                      "prix_unitaire": prixUnitaire.text,
-                                      //calculé
-                                      "montant_tva": montantTva.value.text,
-                                      "total": total.value.text,
-                                    };
-                                    //
-                                    produitsServices.add(ps);
+                                    if ([
+                                          "USD",
+                                          "CDF",
+                                          "EUR"
+                                        ][indexTaux.value] ==
+                                        "USD") {
+                                      try {
+                                        double mt = pourcent(
+                                            double.parse(tauxTva.text),
+                                            int.parse(quantite.text) *
+                                                double.parse(
+                                                    prixUnitaire.text));
+
+                                        Map ps = {
+                                          "article": article.text,
+                                          "code": codeGrandLivre,
+                                          "taux_tva": tauxTva.text,
+                                          "quantite": quantite.text,
+                                          "prix_unitaire": prixUnitaire.text,
+                                          "devise": [
+                                            "USD",
+                                            "CDF",
+                                            "EUR"
+                                          ][indexTaux.value],
+                                          "taux": double.parse(taux.text),
+
+                                          //
+                                          "montant_tva": mt,
+                                          "total": mt +
+                                              (int.parse(quantite.text) *
+                                                  double.parse(
+                                                      prixUnitaire.text)),
+                                        };
+                                        //
+                                        produitsServices.add(ps);
+                                      } catch (e) {
+                                        Get.snackbar(
+                                          "Erreur",
+                                          "Un problème est survenu, veuilliez inserer des chiffres et non des lettres",
+                                          backgroundColor: Colors.red.shade700,
+                                          colorText: Colors.white,
+                                        );
+                                      }
+                                    } else {
+                                      //Conversion...
+
+                                      //
+                                      try {
+                                        double pu =
+                                            double.parse(prixUnitaire.text) /
+                                                double.parse(taux.text);
+                                        print("le pourcentage vaut: pu = $pu");
+                                        //
+                                        double mt = pourcent(
+                                            double.parse(tauxTva.text),
+                                            int.parse(quantite.text) * pu);
+
+                                        Map ps = {
+                                          "article": article.text,
+                                          "code": codeGrandLivre,
+                                          "taux_tva": tauxTva.text,
+                                          "quantite": quantite.text,
+                                          "prix_unitaire": prixUnitaire.text,
+                                          "devise": [
+                                            "USD",
+                                            "CDF",
+                                            "EUR"
+                                          ][indexTaux.value],
+                                          "taux": double.parse(taux.text),
+
+                                          //
+                                          "montant_tva": mt,
+                                          "total": mt +
+                                              (int.parse(quantite.text) * pu),
+                                        };
+                                        //
+                                        produitsServices.add(ps);
+                                      } catch (e) {
+                                        Get.snackbar(
+                                          "Erreur",
+                                          "Un problème est survenu, veuilliez inserer des chiffres et non des lettres",
+                                          backgroundColor: Colors.red.shade700,
+                                          colorText: Colors.white,
+                                        );
+                                      }
+                                    }
                                   },
                                   child: Text("Ajouter"),
                                 ),
@@ -630,37 +1357,37 @@ class Caisse extends StatelessWidget {
                                           MainAxisAlignment.start,
                                       children: [
                                         Container(
-                                            height: 30,
-                                            alignment: Alignment.centerLeft,
-                                            padding: EdgeInsets.only(left: 10),
-                                            color: Colors.black,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "Produit & Service N° ${index + 1}",
-                                                  style: const TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
+                                          height: 30,
+                                          alignment: Alignment.centerLeft,
+                                          padding: EdgeInsets.only(left: 10),
+                                          color: Colors.black,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "Produit & Service N° ${index + 1}",
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
                                                 ),
-                                                IconButton(
-                                                  onPressed: () {
-                                                    //
-                                                    produitsServices
-                                                        .removeAt(index);
-                                                  },
-                                                  icon: Icon(
-                                                    Icons.delete,
-                                                    color: Colors.white,
-                                                    size: 20,
-                                                  ),
+                                              ),
+                                              IconButton(
+                                                onPressed: () {
+                                                  //
+                                                  produitsServices
+                                                      .removeAt(index);
+                                                },
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.white,
+                                                  size: 20,
                                                 ),
-                                              ],
-                                            )),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                         Expanded(
                                           flex: 1,
                                           child: Padding(
@@ -924,8 +1651,8 @@ class Caisse extends StatelessWidget {
                 "taux_montant": tauxLabel.value,
                 "solder": 1,
                 "operation": operation,
-                "axercice": box.read("exercice") ?? "",
-                "fournisseur": fournisseur,
+                "exercice": box.read("exercice") ?? "",
+                "caisseentite": caisseentite,
                 "date_facture": dateFacture.value,
                 "date_echeance": dateEcheance.value,
                 "reference": referenceFac.text,
@@ -944,5 +1671,18 @@ class Caisse extends StatelessWidget {
       ),
     );
   }
+
   //
+  double pourcent(double pr, double vt) {
+    //
+    //(%) = 100 x Valeur partielle/Valeur totale
+    //double prct = (5 * montant) / 100;
+    double prct = (100 * 5) / 100;
+    //prct * Valeur totale = (100 * Valeur partielle)
+    //(prct * Valeur totale) / 100 = Valeur partielle
+    double vp = (pr * vt) / 100;
+    print("le pourcentage vaut: 1 = $prct");
+    print("le pourcentage vaut: 2 = $vp");
+    return vp;
+  }
 }

@@ -11,6 +11,7 @@ import 'caisses/caisse.dart';
 import 'caisses/caisse_controller.dart';
 import 'clients_fournisseurs/clients_fournisseurs.dart';
 import 'journal/journal.dart';
+import 'journal/journal_caisse/journal_caisse.dart';
 import 'parametres/parametres.dart';
 import 'ventes/ventes_controller.dart';
 
@@ -44,7 +45,7 @@ class _Accueil extends State<Accueil> with TickerProviderStateMixin {
   // NiveauController niveauController = Get.put(NiveauController());
   //
   //Horaire//Calendrier//Evenement//Utilisateur//Infos//Live/
-  Rx<Widget> vue = Rx(Achats()); //
+  Rx<Widget> vue = Rx(Bilan()); //
   RxInt choix = 0.obs;
   //
   List angles = [
